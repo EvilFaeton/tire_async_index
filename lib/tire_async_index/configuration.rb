@@ -5,7 +5,7 @@ module TireAsyncIndex
     attr_accessor :queue
     attr_accessor :engine
 
-    def backend_engine type
+    def background_engine type
       if AVALAIBLE_ENGINE.include?(type.to_sym)
         @engine = type.to_sym
       else

@@ -1,6 +1,3 @@
-require 'tire_assync_index/workers/sidekiq_update_index_worker' if TireAsyncIndex.configuration.engine == :sidekiq
-require 'tire_assync_index/workers/resque_update_index_job'     if TireAsyncIndex.configuration.engine == :resque
-
 module Tire
   module Model
     module AsyncCallbacks
@@ -8,7 +5,7 @@ module Tire
 
         if base.respond_to?(:after_save) && base.respond_to?(:after_destroy)
           base.send :after_save,    lambda { 
-            case TireAsyncIndex.configuration.engine
+            case TireAsyncIndex.engine
             when :sidekiq
               SidekiqUpdateIndexWorker.perform_async(base.name, id)
             when :resque
