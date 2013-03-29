@@ -1,6 +1,6 @@
 # TireAsyncIndex
 
-TODO: Write a gem description
+It's extension for [Tire](https://github.com/karmi/tire/) (client for the Elasticsearch search engine), which allow to update index of ActiveRecord model using background job (based on [Sidekiq](https://github.com/mperham/sidekiq) or [Resque](https://github.com/resque/resque)).
 
 ## Installation
 
@@ -16,9 +16,27 @@ Or install it yourself as:
 
     $ gem install tire_async_index
 
+## Configuration
+
+You could configure TireAsyncIndex in initializer:
+    
+    TireAsyncIndex.configure do |config|
+        config.background_engine :sidekiq # or :resque
+        config.use_queue         :high    # name of your queue
+    end
+
 ## Usage
 
-TODO: Write usage instructions here
+Just add AsyncCallbacks to your model:
+    
+    class User < ActiveRecord::Base
+        include Tire::Model::Search
+        include Tire::Model::AsyncCallbacks
+        
+        ...
+    end
+    
+That's all.
 
 ## Contributing
 
