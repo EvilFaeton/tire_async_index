@@ -2,8 +2,8 @@ module Tire
   module Model
     module AsyncCallbacks
       def self.included(base)
-
         if base.respond_to?(:after_save) && base.respond_to?(:after_destroy)
+          puts "asdfadasdas"
           base.send :after_save,    lambda { 
             case TireAsyncIndex.engine
             when :sidekiq

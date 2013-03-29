@@ -1,11 +1,11 @@
 require 'test_helper'
 require 'tire'
+require 'sidekiq'
+require 'resque'
 require 'tire_async_index'
 
-class SomeModel
-  attr_accessor :id
+class User < ActiveRecord::Base
   include Tire::Model::AsyncCallbacks
-
 end
 
 describe TireAsyncIndex do
@@ -50,7 +50,37 @@ describe TireAsyncIndex do
 
   context "integration" do
 
+    it "should not start backroub on no engine" do
+      TireAsyncIndex.configure do |config|
+        config.background_engine :none
+      end
+      a = User.new
+      a.stub(:tire) { a }
+      a.should_receive(:update_index)
+      a.save
+    end
 
+    it "should start sidekiq" do
+      TireAsyncIndex.configure do |config|
+        config.background_engine :sidekiq
+      end
+
+      SidekiqUpdateIndexWorker.should_receive(:perform_async).with("User", instance_of(Fixnum))
+
+      a = User.new
+      a.save
+    end
+
+    it "should start resque" do
+      TireAsyncIndex.configure do |config|
+        config.background_engine :resque
+      end
+
+      Resque.should_receive(:enqueue).with(ResqueUpdateIndexJob, "User", instance_of(Fixnum))
+
+      a = User.new
+      a.save
+    end
 
   end
 end
