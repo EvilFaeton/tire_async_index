@@ -11,7 +11,7 @@ end
 describe TireAsyncIndex do
   context "configurable" do
     it "valid default config settings" do
-      TireAsyncIndex.queue_name.should eql :normal
+      TireAsyncIndex.queue.should eql :normal
       TireAsyncIndex.engine.should eql :none
     end
 
@@ -20,7 +20,7 @@ describe TireAsyncIndex do
         config.use_queue :high
       end
 
-      TireAsyncIndex.queue_name.should eql :high
+      TireAsyncIndex.queue.should eql :high
     end    
 
     it "should be able to set sidekiq as engine" do

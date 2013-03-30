@@ -4,8 +4,10 @@ It's extension for [Tire](https://github.com/karmi/tire/) (client for the Elasti
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this line to your application's Gemfile after `tire` and `sidekiq` or `resque` gems:
 
+    gem 'tire'
+    gem 'sidekiq' #'resque'
     gem 'tire_async_index'
 
 And then execute:
