@@ -1,5 +1,7 @@
 # TireAsyncIndex
 
+[![Build Status](https://secure.travis-ci.org/EvilFaeton/tire_async_index.png)](http://travis-ci.org/EvilFaeton/tire_async_index)
+
 It's extension for [Tire](https://github.com/karmi/tire/) (client for the Elasticsearch search engine), which allow to update index of ActiveRecord model using background job (based on [Sidekiq](https://github.com/mperham/sidekiq) or [Resque](https://github.com/resque/resque)).
 
 ## Installation
