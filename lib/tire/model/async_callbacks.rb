@@ -18,7 +18,7 @@ module Tire
 
           base.send :after_commit, index_update, on: :create
           base.send :after_commit, index_update, on: :update
-          base.send :after_commit, lambda { tire.update_index }, :order => :first, on: :destroy
+          base.send :after_commit, lambda { tire.update_index }, order: :first, on: :destroy
         end
 
         if base.respond_to?(:before_destroy) && !base.instance_methods.map(&:to_sym).include?(:destroyed?)
