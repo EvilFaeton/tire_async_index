@@ -4,6 +4,8 @@
 
 It's extension for [Tire](https://github.com/karmi/tire/) (client for the Elasticsearch search engine), which allow to update index of ActiveRecord model using background job (based on [Sidekiq](https://github.com/mperham/sidekiq) or [Resque](https://github.com/resque/resque)).
 
+Requirements: Ruby 1.9, 2.0, Rails => 3.0
+
 ## Installation
 
 Add this line to your application's Gemfile after `tire` and `sidekiq` or `resque` gems:
