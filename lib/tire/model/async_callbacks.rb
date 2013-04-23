@@ -2,8 +2,8 @@ module Tire
   module Model
     module AsyncCallbacks
       def self.included(base)
-        if base.respond_to?(:after_save) && base.respond_to?(:after_destroy)
-          base.send :after_save,    lambda { 
+        if base.respond_to?(:after_commit)
+          index_update = lambda {
             case TireAsyncIndex.engine
             when :sidekiq
               SidekiqUpdateIndexWorker.perform_async(base.name, id)
@@ -12,9 +12,13 @@ module Tire
             else
               tire.update_index
             end
-            self 
+
+            self
           }
-          base.send :after_destroy, lambda { tire.update_index }, :order => :first
+
+          base.send :after_commit, index_update, on: :create
+          base.send :after_commit, index_update, on: :update
+          base.send :after_commit, lambda { tire.update_index }, :order => :first, on: :destroy
         end
 
         if base.respond_to?(:before_destroy) && !base.instance_methods.map(&:to_sym).include?(:destroyed?)
