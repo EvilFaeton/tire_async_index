@@ -21,12 +21,19 @@ module TireAsyncIndex
   end
 
   def reconfig_workers
-    SidekiqUpdateIndexWorker.sidekiq_options_hash["queue"] = TireAsyncIndex.queue if defined?(Sidekiq)
+    if defined?(Sidekiq)
+      Workers::SidekiqUpdateIndex.sidekiq_options_hash["queue"] = TireAsyncIndex.queue
+    end
+  end
+
+  module Workers
+    autoload :UpdateIndex, 'tire_async_index/workers/update_index'
   end
 
 end
 
-require 'tire_async_index/workers/sidekiq_update_index_worker' if defined?(Sidekiq)
-require 'tire_async_index/workers/resque_update_index_job'     if defined?(Resque)
+require 'tire_async_index/workers/sidekiq_update_index' if defined?(Sidekiq)
+require 'tire_async_index/workers/resque_update_index' if defined?(Resque)
 require 'tire/model/async_callbacks'
+
 TireAsyncIndex.configure {}
