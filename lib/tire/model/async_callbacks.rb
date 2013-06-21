@@ -4,6 +4,10 @@ module Tire
 
       extend ActiveSupport::Concern
 
+      ID_CONVERSION = {
+          'Moped::BSON::ObjectId' => :to_s
+      }
+
       included do
         # Bind after save or create callback
         if self.respond_to? :after_commit
@@ -30,10 +34,10 @@ module Tire
       def __async_tire_callback(type)
         case TireAsyncIndex.engine
           when :sidekiq
-            TireAsyncIndex::Workers::SidekiqUpdateIndex.perform_async type, self.class.name, self.id
+            TireAsyncIndex::Workers::SidekiqUpdateIndex.perform_async type, self.class.name, __async_tire_object_id
 
           when :resque
-            Resque.enqueue TireAsyncIndex::Workers::ResqueUpdateIndex, type, self.class.name, self.id
+            Resque.enqueue TireAsyncIndex::Workers::ResqueUpdateIndex, type, self.class.name, __async_tire_object_id
 
           else
             case type
@@ -42,6 +46,14 @@ module Tire
               when :delete
                 tire.index.remove self
             end
+        end
+      end
+
+      def __async_tire_object_id
+        if (method = ID_CONVERSION[self.id.class.name])
+          self.id.send(method)
+        else
+          self.id
         end
       end
 

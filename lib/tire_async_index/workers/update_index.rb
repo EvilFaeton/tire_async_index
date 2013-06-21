@@ -14,19 +14,19 @@ module TireAsyncIndex
       def perform(action_type, class_name, id)
         clazz = class_name.constantize
 
-        case action_type
+        case action_type.to_sym
           when :update
-            object = clazz.find(id) rescue nil
+            object = clazz.find(id)
+            puts "Class: #{clazz}"
+            puts "Id: #{id}"
             object.present? && object.respond_to?(:tire) && object.tire.update_index
 
           when :delete
-            object.new.tap do |inst|
-              tire.remove(inst.tire.document_type, { _id: id })
+            clazz.new.tap do |inst|
+              inst.tire.index.remove(inst.tire.document_type, { _id: id })
             end
         end
-
       end
-
     end
   end
 end

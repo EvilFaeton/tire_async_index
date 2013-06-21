@@ -74,7 +74,7 @@ describe TireAsyncIndex do
         TireAsyncIndex.configure do |config|
           config.background_engine :none
         end
-        a    = AmUser.new.tap{|a| a.id = 23}
+        a    = AmUser.new.tap { |a| a.id = 23 }
         tire = double(:Tire)
         a.stub(:tire) { tire }
         tire.should_receive(:update_index)
@@ -88,7 +88,7 @@ describe TireAsyncIndex do
 
         TireAsyncIndex::Workers::SidekiqUpdateIndex.should_receive(:perform_async).with(:update, "AmUser", instance_of(Fixnum))
 
-        AmUser.new.tap{|a| a.id = 23}.save
+        AmUser.new.tap { |a| a.id = 23 }.save
       end
 
       it "should start resque" do
@@ -98,7 +98,7 @@ describe TireAsyncIndex do
 
         Resque.should_receive(:enqueue).with(TireAsyncIndex::Workers::ResqueUpdateIndex, :update, "AmUser", instance_of(Fixnum))
 
-        AmUser.new.tap{|a| a.id = 23}.save
+        AmUser.new.tap { |a| a.id = 23 }.save
       end
     end
 
@@ -124,7 +124,7 @@ describe TireAsyncIndex do
 
         TireAsyncIndex::Workers::SidekiqUpdateIndex.should_receive(:perform_async).with(:delete, "AmUser", instance_of(Fixnum))
 
-        AmUser.new.tap{ |a| a.id = 23 }.destroy
+        AmUser.new.tap { |a| a.id = 23 }.destroy
       end
 
       it "should enqueue resque job" do
@@ -134,7 +134,7 @@ describe TireAsyncIndex do
 
         Resque.should_receive(:enqueue).with(TireAsyncIndex::Workers::ResqueUpdateIndex, :delete, "AmUser", instance_of(Fixnum))
 
-        AmUser.new.tap{|a| a.id = 23 }.destroy
+        AmUser.new.tap { |a| a.id = 23 }.destroy
       end
     end
 
