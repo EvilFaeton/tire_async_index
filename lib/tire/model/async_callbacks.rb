@@ -1,36 +1,50 @@
 module Tire
   module Model
     module AsyncCallbacks
-      def self.included(base)
-        if base.respond_to?(:after_commit)
-          index_update = lambda {
-            case TireAsyncIndex.engine
-            when :sidekiq
-              SidekiqUpdateIndexWorker.perform_async(base.name, id)
-            when :resque
-              Resque.enqueue(ResqueUpdateIndexJob, base.name, id)
-            else
-              tire.update_index
+
+      extend ActiveSupport::Concern
+
+      included do
+        # Bind after save or create callback
+        if self.respond_to? :after_commit
+          after_commit :__async_tire_save_index
+
+        elsif self.respond_to? :after_save
+          after_save :__async_tire_save_index
+        end
+
+        # Bind before destroy callback
+        if self.respond_to? :before_destroy
+          before_destroy :__async_tire_delete_index
+        end
+      end
+
+      def __async_tire_save_index
+        __async_tire_callback :update
+      end
+
+      def __async_tire_delete_index
+        __async_tire_callback :delete
+      end
+
+      def __async_tire_callback(type)
+        case TireAsyncIndex.engine
+          when :sidekiq
+            TireAsyncIndex::Workers::SidekiqUpdateIndex.perform_async type, self.class.name, self.id
+
+          when :resque
+            Resque.enqueue TireAsyncIndex::Workers::ResqueUpdateIndex, type, self.class.name, self.id
+
+          else
+            case type
+              when :update
+                tire.update_index
+              when :delete
+                tire.index.remove self
             end
-
-            self
-          }
-
-          base.send :after_commit, index_update, on: :create
-          base.send :after_commit, index_update, on: :update
-          base.send :after_commit, lambda { tire.update_index }, order: :first, on: :destroy
         end
-
-        if base.respond_to?(:before_destroy) && !base.instance_methods.map(&:to_sym).include?(:destroyed?)
-          base.class_eval do
-            before_destroy  { @destroyed = true }
-            def destroyed?; !!@destroyed; end
-          end
-        end
-
       end
 
     end
-
   end
 end
