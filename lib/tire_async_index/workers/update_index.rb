@@ -12,7 +12,7 @@ module TireAsyncIndex
       #   id - Document id
       #
       def perform(action_type, class_name, id)
-        klass = class_name.constantize
+        klass = Kernel.const_get(class_name)
 
         case action_type.to_sym
           when :update
