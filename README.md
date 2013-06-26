@@ -25,7 +25,7 @@ Or install it yourself as:
 ## Configuration
 
 You could configure TireAsyncIndex in initializer:
-    
+
     TireAsyncIndex.configure do |config|
         config.background_engine :sidekiq # or :resque
         config.use_queue         :high    # name of your queue
@@ -34,15 +34,20 @@ You could configure TireAsyncIndex in initializer:
 ## Usage
 
 Just add AsyncCallbacks to your model:
-    
+
     class User < ActiveRecord::Base
         include Tire::Model::Search
         include Tire::Model::AsyncCallbacks
-        
+
         ...
     end
-    
+
 That's all.
+
+## TODO
+
+* Add support for custom filter / custom finders
+* Test for workers
 
 ## Contributing
 
