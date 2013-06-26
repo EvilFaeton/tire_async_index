@@ -13,7 +13,6 @@ module TireAsyncIndex
       #
       def perform(action_type, class_name, id)
         klass = Kernel.const_get(class_name)
-        action_type = action_type.to_sym
 
         case action_type.to_sym
           when :update
