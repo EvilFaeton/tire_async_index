@@ -17,8 +17,6 @@ module TireAsyncIndex
         case action_type.to_sym
           when :update
             object = clazz.find(id)
-            puts "Class: #{clazz}"
-            puts "Id: #{id}"
             object.present? && object.respond_to?(:tire) && object.tire.update_index
 
           when :delete
