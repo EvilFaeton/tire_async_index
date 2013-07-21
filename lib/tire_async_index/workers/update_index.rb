@@ -12,7 +12,7 @@ module TireAsyncIndex
       #   id - Document id
       #
       def perform(action_type, class_name, id)
-        klass = Kernel.const_get(class_name)
+        klass = find_class_const(class_name)
 
         case action_type.to_sym
           when :update
@@ -26,6 +26,16 @@ module TireAsyncIndex
             klass.new.tap do |inst|
               inst.tire.index.remove(inst.tire.document_type, { _id: id })
             end
+        end
+      end
+
+      def find_class_const(class_name)
+        if defined?(RUBY_VERSION) && RUBY_VERSION.match(/^2\./)
+          Kernel.const_get(class_name)
+        else
+          class_name.split('::').reduce(Object) do |mod, const_name|
+            mod.const_get(const_name)
+          end
         end
       end
     end
