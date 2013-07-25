@@ -8,7 +8,7 @@ module TireAsyncIndex
       end
 
       def self.perform(action_type, class_name, id)
-        process(action_type, class_name, id)
+        self.new.process(action_type, class_name, id)
       end
     end
   end
