@@ -32,23 +32,7 @@ module Tire
       end
 
       def async_tire_callback(type)
-        case TireAsyncIndex.engine
-          when :sidekiq
-            TireAsyncIndex::Workers::SidekiqUpdateIndex.
-              perform_async type, self.class.name, async_tire_object_id
-
-          when :resque
-            Resque.enqueue TireAsyncIndex::Workers::ResqueUpdateIndex,
-              type, self.class.name, async_tire_object_id
-
-          else
-            case type
-              when :update
-                tire.update_index
-              when :delete
-                tire.index.remove self
-            end
-        end
+        TireAsyncIndex.worker.run(type, self.class.name, async_tire_object_id)
       end
 
       def async_tire_object_id
