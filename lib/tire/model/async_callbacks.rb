@@ -32,7 +32,16 @@ module Tire
       end
 
       def async_tire_callback(type)
-        TireAsyncIndex.worker.run(type, self.class.name, async_tire_object_id)
+        if TireAsyncIndex.engine == :none
+          case type
+          when :update
+            tire.update_index
+          when :delete
+            tire.index.remove self
+          end
+        else
+          TireAsyncIndex.worker.run(type, self.class.name, async_tire_object_id)
+        end
       end
 
       def async_tire_object_id

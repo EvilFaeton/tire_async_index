@@ -18,7 +18,7 @@ describe TireAsyncIndex::Workers::UpdateIndex do
 
     it 'resolves class constant' do
       expect {
-        instance.perform(:nothing, 'Level1::Level2::Model', 123)
+        instance.process(:nothing, 'Level1::Level2::Model', 123)
       }.not_to raise_error
     end
   end

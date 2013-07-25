@@ -11,9 +11,6 @@ module TireAsyncIndex
       #   class_name - Model class name
       #   id - Document id
       #
-      def self.run(action_type, class_name, id)
-        TireAsyncIndex::Workers::Sidekiq.new.process(action_type, class_name, id)
-      end
 
       def process(action_type, class_name, id)
         klass = find_class_const(class_name)

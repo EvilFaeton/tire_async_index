@@ -3,7 +3,7 @@ module TireAsyncIndex
     class Resque < UpdateIndex
       def self.queue; TireAsyncIndex.queue end
 
-      def run(action_type, class_name, id)
+      def self.run(action_type, class_name, id)
         ::Resque.enqueue TireAsyncIndex::Workers::Resque, action_type, class_name, id
       end
 
