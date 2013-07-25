@@ -1,8 +1,6 @@
 ## 0.3.0
 
   * refactor loading structure
-  * added orm_adapter
-  * added custom id / finder
 
 ## 0.2.1
 
