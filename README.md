@@ -8,10 +8,8 @@ Requirements: Ruby 1.9, 2.0, Rails => 3.0
 
 ## Installation
 
-Add this line to your application's Gemfile after `tire` and `sidekiq` or `resque` gems:
+Add this line to your application's Gemfile:
 
-    gem 'tire'
-    gem 'sidekiq' #'resque'
     gem 'tire_async_index'
 
 And then execute:
@@ -43,6 +41,23 @@ Just add AsyncCallbacks to your model:
     end
 
 That's all.
+
+## Custom identificator or finder
+
+If you need more complex solution to define identificators and/or finder. You could simply add methods to override default:
+
+    class User < ActiveRecord::Base
+        include Tire::Model::Search
+        include Tire::Model::AsyncCallbacks
+
+        def self.tire_async_finder(id)
+          User.where(...).first
+        end
+
+        def async_tire_object_id
+          "#{id}-#{name}"
+        end
+    end
 
 ## TODO
 
