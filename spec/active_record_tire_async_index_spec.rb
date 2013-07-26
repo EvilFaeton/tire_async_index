@@ -8,6 +8,14 @@ class ArUser < ActiveRecord::Base
   include Tire::Model::AsyncCallbacks
 end
 
+class ArIdUser < ActiveRecord::Base
+  include Tire::Model::AsyncCallbacks
+
+  def async_tire_object_id
+    "text_id"
+  end
+end
+
 describe TireAsyncIndex do
 
   before(:all) do
@@ -86,6 +94,28 @@ describe TireAsyncIndex do
         Resque.should_receive(:enqueue).with(TireAsyncIndex::Workers::Resque, :update, "ArUser", instance_of(Fixnum))
 
         a = ArUser.new
+        a.save
+      end
+
+      it "should start sidekiq with custom id" do
+        TireAsyncIndex.configure do |config|
+          config.background_engine :sidekiq
+        end
+
+        TireAsyncIndex::Workers::Sidekiq.should_receive(:perform_async).with(:update, "ArIdUser", "text_id")
+
+        a = ArIdUser.new
+        a.save
+      end
+
+      it "should start resque with custom id" do
+        TireAsyncIndex.configure do |config|
+          config.background_engine :resque
+        end
+
+        Resque.should_receive(:enqueue).with(TireAsyncIndex::Workers::Resque, :update, "ArIdUser", "text_id")
+
+        a = ArIdUser.new
         a.save
       end
     end

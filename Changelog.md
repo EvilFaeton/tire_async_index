@@ -1,6 +1,7 @@
 ## 0.3.0
 
   * refactor loading structure
+  * custom identificator & finders
 
 ## 0.2.1
 
