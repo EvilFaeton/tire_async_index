@@ -40,6 +40,7 @@ Just add AsyncCallbacks to your model:
         ...
     end
 
+Also check that you include `tire` queue to `sidekiq.yml` or to `-q` param then you start sidekiq.
 That's all.
 
 ## Custom identificator or finder
