@@ -154,6 +154,24 @@ describe TireAsyncIndex do
 
         ArUser.new.tap { |a| a.id = 23 }.destroy
       end
+
+      it "should not enqueue update resque job" do
+        TireAsyncIndex.configure do |config|
+          config.background_engine :resque
+        end
+
+        # this way of testing that enqueue is not called with update is ugly but it is needed since ActiveRecord
+        # swallows exceptions thrown in after_commit. See https://github.com/rspec/rspec-mocks/issues/228
+
+        update = false
+        Resque.stub(:enqueue)
+        Resque.stub(:enqueue).with(TireAsyncIndex::Workers::Resque, :update, "ArUser", instance_of(Fixnum)) { update = true }
+
+        ArUser.new.tap { |a| a.id = 23 }.destroy
+
+        expect(update).to be_false
+      end
+
     end
 
   end
