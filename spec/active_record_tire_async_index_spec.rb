@@ -59,6 +59,14 @@ describe TireAsyncIndex do
         end
       }.to raise_error(TireAsyncIndex::EngineNotFound)
     end
+
+    it "should be able to set a class as an error handler" do
+      TireAsyncIndex.configure do |config|
+        config.use_error_handler Object
+      end
+
+      TireAsyncIndex.error_handler.should eql Object
+    end
   end
 
   context "integration" do
@@ -158,3 +166,4 @@ describe TireAsyncIndex do
 
   end
 end
+

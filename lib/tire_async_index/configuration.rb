@@ -4,6 +4,7 @@ module TireAsyncIndex
 
     attr_accessor :queue
     attr_accessor :engine
+    attr_accessor :error_handler
 
     def background_engine type
       if AVALAIBLE_ENGINE.include?(type.to_sym)
@@ -15,6 +16,10 @@ module TireAsyncIndex
 
     def use_queue name
       @queue = name.to_sym
+    end
+
+    def use_error_handler error_handler
+      @error_handler = error_handler
     end
 
     def initialize

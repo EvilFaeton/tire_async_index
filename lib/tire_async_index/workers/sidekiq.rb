@@ -11,6 +11,12 @@ module TireAsyncIndex
 
       def perform(action_type, class_name, id)
         process(action_type, class_name, id)
+      rescue Exception => e
+        if TireAsyncIndex.error_handler
+          TireAsyncIndex.error_handler.handle(self, action_type, class_name, id, e)
+        else
+          raise e
+        end
       end
 
     end

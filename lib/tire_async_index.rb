@@ -19,6 +19,10 @@ module TireAsyncIndex
     self.configuration.engine
   end
 
+  def error_handler
+    self.configuration.error_handler
+  end
+
   def worker
     case configuration.engine
     when :sidekiq
