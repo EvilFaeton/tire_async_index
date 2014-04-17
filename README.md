@@ -29,6 +29,27 @@ You could configure TireAsyncIndex in initializer:
         config.use_queue         :high    # name of your queue
     end
 
+### Error Handling
+
+You can specify an error handling class:
+
+    TireAsyncIndex.configure do |config|
+      config.error_handler TireAsyncHandler
+    end
+
+It must respond to `handle`, for instance if you want to retry on a term
+exception and you use Resque:
+
+    class TireAsyncHandler
+      def self.handle(klass, action_type, class_name, id, exception)
+        if exception.is_a?(Resque::TermException)
+          Resque.enqueue(klass, action_type, class_name, id)
+        else
+          raise exception
+        end
+      end
+    end
+
 ## Usage
 
 Just add AsyncCallbacks to your model:
