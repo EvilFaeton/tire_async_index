@@ -17,10 +17,12 @@ module TireAsyncIndex
 
         case action_type.to_sym
           when :update
-            object = klass.send(get_finder_method(klass), id)
-
-            if object.present? && object.respond_to?(:tire)
-              object.tire.update_index
+            begin
+              object = klass.send(get_finder_method(klass), id)
+              if object.present? && object.respond_to?(:tire)
+                object.tire.update_index
+              end
+            rescue => e
             end
           when :delete
 
